@@ -1,0 +1,9 @@
+1.- npm install @react-navigation/native
+1.2.- yarn add @react-navigation/native
+
+2.- npm install react-native-web@0.17.1 native-base react-native-svg@12.1.1 react-native-safe-area-context@3.3.2
+
+3.- npx expo install react-native-screens react-native-safe-area-context
+
+4.- npm install @react-navigation/bottom-tabs
+4.2.- yarn add @react-navigation/bottom-tabs
