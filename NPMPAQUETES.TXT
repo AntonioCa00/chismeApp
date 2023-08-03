@@ -7,3 +7,9 @@
 
 4.- npm install @react-navigation/bottom-tabs
 4.2.- yarn add @react-navigation/bottom-tabs
+
+5.- npm install react-native-biometrics
+
+6.- expo install expo-local-authentication
+
+npm install react-native-biometrics --save

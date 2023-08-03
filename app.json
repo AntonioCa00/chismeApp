@@ -15,7 +15,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Proteger tu cuenta con reconocimiento facial utilizando Face ID"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,6 +26,9 @@
         "backgroundColor": "#ffffff"
       }
     },
+    "permissions": [
+      "USE_FINGERPRINT"
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     }
