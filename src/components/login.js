@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, Center } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-import * as LocalAuthentication from 'expo-local-authentication';
+import {navigate} from '../../navigation';
 
 function Login({ handleLogin }) {
     const navigation = useNavigation(); // Obtiene el objeto de navegación
@@ -10,40 +10,47 @@ function Login({ handleLogin }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLoginButtonPress = () => {
-        console.log("Bienvenido a chismeApp");
-        handleLogin(); // Llama a la función handleLogin que viene como prop desde el componente Navigation
-    };
+    const checkUser = async (corr, pass) => {
+    try {
+        const response = await fetch(
+            `https://practica2.fly.dev/login/${corr}/${pass}`,
+            {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        const textResponse = await response.text(); // Obtener la respuesta como texto
+        const json = JSON.parse(textResponse); // Intentar analizar el texto como JSON
+        return json;
+        } catch (parseError) {
+            console.log('Error al verificar usuario:', parseError);
+        }
+};
+
+const handleLoginButtonPress = async () => {
+    try {
+        const user = await checkUser(email, password);
+        
+        if (user.length !== 0) {
+            console.log('Inicio de sesión exitoso');
+            handleLogin();
+            const userId = user[0].id_user; // Obtiene el userId del primer usuario
+            navigation.navigate("recuerdo", { userId }); // Agrega esta línea
+            navigation.navigate("inicio", { userId }); // Pasa el userId a la pantalla de inicio
+        } else {
+            console.log('Usuario no encontrado o credenciales incorrectas');
+        }
+    } catch (error) {
+        console.log('Error al verificar usuario:', error);
+    }
+};  
 
     const handleRegisterLinkPress = () => {
         // Navega a la pantalla de registro (Registra)
-        navigation.navigate("registra");
-    };
-
-    const handleFingerprintLogin = async () => {
-        try {
-            const hasHardwareSupport = await LocalAuthentication.hasHardwareAsync();
-            if (hasHardwareSupport) {
-                const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-                if (isEnrolled) {
-                    const result = await LocalAuthentication.authenticateAsync({
-                        promptMessage: "Inicia sesión usando tu huella digital",
-                    });
-                    if (result.success) {
-                        console.log("Inicio de sesión exitoso con huella digital");
-                        handleLogin(); // Realizar el inicio de sesión si la autenticación es exitosa
-                    } else {
-                        console.log("Error en la autenticación con huella digital");
-                    }
-                } else {
-                    console.log("No hay huellas digitales registradas en el dispositivo");
-                }
-            } else {
-                console.log("El dispositivo no tiene soporte para huella digital");
-            }
-        } catch (error) {
-            console.log("Error en la autenticación con huella digital:", error);
-        }
+        navigate("registra");
     };
 
     return (
@@ -83,9 +90,6 @@ function Login({ handleLogin }) {
                             Registrate.
                         </Link>
                     </HStack>
-                    <Button onPress={handleFingerprintLogin} mt="2" colorScheme="indigo">
-                        Iniciar sesión con huella digital
-                    </Button>
                 </VStack>
             </Box>
         </Center>

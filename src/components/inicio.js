@@ -1,69 +1,100 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Heading, Text, Center, Stack, Button } from "native-base";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused, useRoute } from "@react-navigation/native";
 
 function Inicio() {
 
     const navigation = useNavigation(); // Obtiene el objeto de navegación
 
-    const handleEdit = () => {
-        // Navega a la pantalla de registro (Registra)
-        navigation.navigate("edit");
+    const route = useRoute();
+    const userId = route.params?.userId;
+
+    const [recuerdos, setRecuerdos] = useState([]); // Estado para almacenar los recuerdos
+    const isFocused = useIsFocused(); // Verifica si la pantalla tiene enfoque
+
+    useEffect(() => {
+        // Llama a la función que obtiene los recuerdos del usuario usando el userId
+        fetchRecuerdos(userId);
+    }, [userId, isFocused]);
+
+    const fetchRecuerdos = async (userId) => {
+        try {
+            const response = await fetch(
+                `https://practica2.fly.dev/recuerdos/${userId}`, // Cambia la URL a la correcta
+                {
+                    method: 'GET',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            const json = await response.json();
+            setRecuerdos(json);
+        } catch (error) {
+            console.log('Error al obtener recuerdos:', error);
+        }
     };
 
-    const handleDelete = () => {
-        // Navega a la pantalla de registro (Registra)
-        navigation.navigate("delete");
-    };
+return (
+    <Center>
+        {/* Resto de tu código */}
+        {recuerdos.map((recuerdo, index) => (
+            <Box
+                key={index}
+                maxW="80"
+                rounded="lg"
+                overflow="hidden"
+                borderColor="coolGray.200"
+                mt="6"
+                borderWidth="1"
+                _dark={{
+                    borderColor: "coolGray.600",
+                    backgroundColor: "gray.700"
+                }}
+                _web={{
+                    shadow: 2,
+                    borderWidth: 0
+                }}
+                _light={{
+                    backgroundColor: "gray.50"
+                }}
+            >
+                <Stack p="4" space={3}>
+                    <Stack space={2}>
+                        <Heading size="md" ml="-1">
+                            {recuerdo.titulo}
+                        </Heading>
+                    </Stack>
+                    <Text fontWeight="400">{recuerdo.descripcion}</Text>
+                    <Text> Fecha de creacion: {recuerdo.fecha}</Text>
+                    <Stack
+                        mb="2.5"
+                        mt="1.5"
+                        direction={{ base: "column", md: "row" }}
+                        space={2}
+                        mx={{ base: "auto", md: "0" }}
+                        justifyContent={{ base: "flex-start", md: "center" }}
+                        alignItems={{ base: "flex-start", md: "center" }}
+                    >
+                        <Button size="md" 
+                            onPress={() => navigation.navigate("edit", { userId, recuerdoId: recuerdo.id })}>
+                            Editar
+                        </Button>
+                        <Button
+                            size="md"
+                            colorScheme="secondary"
+                            onPress={() => navigation.navigate("delete", { userId, recuerdoId: recuerdo.id })}
+                        >
+                            Eliminar
+                        </Button>
+                    </Stack>
+                </Stack>
+            </Box>
+        ))}
+    </Center>
+);
 
-    return <Center>
-    <Box alignItems="center">
-    <Heading>
-      <Text color="emerald.500"> chismeApp</Text>
-    </Heading>
-    <Heading mt="3" _dark={{
-      color: "warmGray.200"
-    }} color="coolGray.600" fontWeight="medium" size="sm">
-        Consulta tus recuerdos:        
-    </Heading>
-
-    <Box maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" mt="6" borderWidth="1" _dark={{
-    borderColor: "coolGray.600",
-    backgroundColor: "gray.700"
-    }} _web={{
-        shadow: 2,
-        borderWidth: 0
-    }} _light={{
-        backgroundColor: "gray.50"
-    }}>
-    <Stack p="4" space={3}>
-        <Stack space={2}>
-            <Heading size="md" ml="-1">
-                Nombre del recuerdo
-            </Heading>
-        </Stack>
-        <Text fontWeight="400">
-            En este apartado deberá de ir la descripción que el usuario realice según cada recuerdo que vaya guardando.
-        </Text>
-        <Text> Fecha de creacion:</Text>
-        <Stack
-        mb="2.5"
-        mt="1.5"
-        direction={{ base: "column", md: "row" }} // Aquí se establece "row" para que los botones se posicionen horizontalmente en pantallas grandes
-        space={2}
-        mx={{ base: "auto", md: "0" }}
-        justifyContent={{ base: "flex-start", md: "center" }} // Alinea los botones horizontalmente en el eje principal
-        alignItems={{ base: "flex-start", md: "center" }} // Alinea los botones verticalmente en el eje cruzado
-        >
-          <Button size="md" onPress={handleEdit}>Editar</Button>
-          <Button size="md" colorScheme="secondary" onPress={handleDelete}>
-            Eliminar
-          </Button>
-        </Stack>
-    </Stack>
-    </Box>
-</Box>;
-</Center>
 }
 
 export default Inicio;

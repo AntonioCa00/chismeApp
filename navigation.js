@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
-import Login from "./src/components/login";
+import { NavigationContainer, createNavigationContainerRef  } from "@react-navigation/native";
 import Registra from "./src/components/registra";
 import Inicio from "./src/components/inicio";
 import Recuerdo from "./src/components/recuerdo";
@@ -11,13 +10,23 @@ import Delete from "./src/components/delete";
 
 const Tab = createBottomTabNavigator();
 
+export const navigationRef = createNavigationContainerRef()
+
+export function navigate(name, params) {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate(name, params);
+  }
+}
+
 export default function Navigation() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   // Función para cambiar el estado isLoggedIn cuando el usuario inicie sesión
-  const handleLogin = () => {
+  const handleLogin = (userId) => {
     console.log("Bienvenido a chismeApp");
     setIsLoggedIn(true);
+    setUserId(userId); // Guarda el userId en el estado
   };
 
   const handleLogout = () => {
@@ -25,12 +34,13 @@ export default function Navigation() {
   };
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {isLoggedIn ? (
         <Tab.Navigator initialRouteName="inicio">
           <Tab.Screen
             name="inicio"
             component={Inicio}
+            initialParams={{ userId }} // Añade esta línea para pasar el userId como parámetro inicial
             options={{
               headerRight: () => (
                 <Button onPress={handleLogout} colorScheme="red" title="Cerrar Sesión" />
@@ -50,6 +60,7 @@ export default function Navigation() {
           }} 
           name="edit" 
           component={Edit}
+          initialParams={{ userId }} // Añade esta línea para pasar el userId como parámetro inicial
           options={{
             headerRight: () => (
               <Button onPress={handleLogout} colorScheme="red" title="Cerrar Sesión" />
@@ -62,6 +73,7 @@ export default function Navigation() {
           }} 
           name="delete" 
           component={Delete}
+          initialParams={{ userId }} // Añade esta línea para pasar el userId como parámetro inicial
           options={{
             headerRight: () => (
               <Button onPress={handleLogout} colorScheme="red" title="Cerrar Sesión" />

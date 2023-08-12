@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, Center, NativeBaseProvider } from "native-base";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 function Recuerdo() {
+
+    const navigation = useNavigation(); // Obtiene el objeto de navegación
+
+    const route = useRoute();
+    const userId = route.params?.userId;
 
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split('T')[0];
@@ -11,9 +17,38 @@ function Recuerdo() {
     const [notas, setNotas] = useState("");
     const [fecha, setFecha] = useState(formattedDate);
 
-    const handleCrearRecuerdo = () => {
-    // Aquí puedes realizar la lógica para crear el perfil utilizando los valores de los campos del formulario
-    console.log('Se guardó tu recuerdo: ',titulo)
+    const sendRecuerdo = async(tit,desc,not,fech,id) => {
+      console.log(id);
+      try {
+        const response = await fetch(
+        'https://practica2.fly.dev/insert-recuerdo',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            titulo:tit,
+            descripcion:desc,
+            notas:not,
+            fecha:fech,
+            id_user:id
+          })
+        }
+        );        
+        const json = await response.json();
+        console.log('Se registro el recuerdo',fecha)
+        // Restablecer los estados a su valor inicial ("")
+        setTitulo("");
+        setDescripcion("");
+        setNotas("");
+        setFecha(formattedDate);
+        navigation.navigate("inicio",{userId})
+        return json;
+        } catch (error) {
+          console.log(error)
+        }
     };
 
     return <Center w="100%">
@@ -40,7 +75,7 @@ function Recuerdo() {
           <FormControl.Label>Notas:</FormControl.Label>
           <Input value={notas} onChangeText={(text) => setNotas(text)} placeholder="Puedes agregar notas adicionales" />
         </FormControl>
-        <Button onPress={handleCrearRecuerdo} mt="2" colorScheme="indigo">
+        <Button onPress={() => sendRecuerdo(titulo, descripcion, notas, fecha,userId)} mt="2" colorScheme="indigo">
           Guardar Recuerdo
         </Button>
       </VStack>
@@ -48,4 +83,4 @@ function Recuerdo() {
   </Center>;
 }
 
-export default Recuerdo;
+export default Recuerdo;  

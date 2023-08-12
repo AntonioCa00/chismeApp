@@ -3,22 +3,39 @@ import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, C
 
 function Registra() {
 
-      // Estados para los campos del formulario
-    const [nombre, setNombre] = useState("");
-    const [apellidoPaterno, setApellidoPaterno] = useState("");
-    const [apellidoMaterno, setApellidoMaterno] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+  // Estados para los campos del formulario
+  const [nombre, setNombre] = useState("");
+  const [apellidos, setApellidos] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-    const handleCrearPerfil = () => {
-    // Aquí puedes realizar la lógica para crear el perfil utilizando los valores de los campos del formulario
-    if (password === confirmPassword){
-        console.log("Bienvenido a chismeApp")
-    } else{
-        console.log('Passwords no coinciden')
-    }
-    };
+  const sendUser = async(nom,ape,corr,pass) => {
+    try {
+      const response = await fetch(
+      'https://practica2.fly.dev/insert-user',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nombres: nom,
+          apellidos: ape,
+          correo:corr,
+          contrasena:pass,
+        })
+      }
+      );
+      const json = await response.json();
+      console.log('Se registro')
+      console.log(response); // Agrega esta línea para imprimir la respuesta
+      return json;
+      } catch (error) {
+        console.log(error)
+      }
+  };
     
     return <Center w="100%">
     <Box safeArea p="2" py="8" w="90%" maxW="290">
@@ -38,11 +55,7 @@ function Registra() {
         </FormControl>
         <FormControl>
           <FormControl.Label>Apellido Paterno</FormControl.Label>
-          <Input value={apellidoPaterno} onChangeText={(text) => setApellidoPaterno(text)} placeholder="Ingresa tu apellido paterno" />
-        </FormControl>
-        <FormControl>
-          <FormControl.Label>Apellido Materno</FormControl.Label>
-          <Input value={apellidoMaterno} onChangeText={(text) => setApellidoMaterno(text)} placeholder="Ingresa tu apellido materno" />
+          <Input value={apellidos} onChangeText={(text) => setApellidos(text)} placeholder="Ingresa tu apellido paterno" />
         </FormControl>
         <FormControl>
           <FormControl.Label>E-mail</FormControl.Label>
@@ -56,7 +69,7 @@ function Registra() {
           <FormControl.Label>Confirmar Password</FormControl.Label>
           <Input value={confirmPassword} onChangeText={(text) => setConfirmPassword(text)} type="password"  placeholder="Confirma tu password"/>
         </FormControl>
-        <Button onPress={handleCrearPerfil} mt="2" colorScheme="indigo">
+        <Button onPress={() => sendUser(nombre, apellidos, email, password)} mt="2" colorScheme="indigo">
           Crear perfil
         </Button>
       </VStack>

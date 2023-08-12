@@ -1,10 +1,91 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Heading, AspectRatio, Image, Text, Center, HStack, Stack, NativeBaseProvider, Button } from "native-base";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
+import * as LocalAuthentication from 'expo-local-authentication';
 
 function Delete() {
 
-    const navigation = useNavigation(); // Obtiene el objeto de navegación
+  const navigation = useNavigation(); // Obtiene el objeto de navegación
+
+  const route = useRoute();
+  const userId = route.params?.userId;
+  const recId = route.params?.recuerdoId;
+  const isFocused = useIsFocused(); // Obtiene el estado de enfoque de la pantalla
+
+  const [recuerdo, setRecuerdo] = useState([]); // Estado para almacenar recuerdo
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchRecuerdo(recId);
+    }
+  }, [isFocused, recId, userId]);
+
+  const fetchRecuerdo = async (rec) => {
+    try {
+      const response = await fetch(`https://practica2.fly.dev/recuerdo/${rec}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      const json = await response.json();
+      setRecuerdo(json);
+    } catch (error) {
+      console.log("Error al obtener recuerdo:", error);
+    }
+  };
+
+  const confirmDel = async () => {
+    try {
+      const hasHardwareSupport = await LocalAuthentication.hasHardwareAsync();
+      if (hasHardwareSupport) {
+          const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+          if (isEnrolled) {
+              const result = await LocalAuthentication.authenticateAsync({
+                  promptMessage: "se elimina con huella digital",
+              });
+              if (result.success) {
+                  console.log("Se va a borrar el recuerdo");
+                  delRecuerdo(recId); // Realizar el inicio de sesión si la autenticación es exitosa
+              } else {
+                  console.log("Error en la deteccion de huella");
+              }
+          } else {
+              console.log("No hay huellas digitales registradas en el dispositivo");
+          }
+      } else {
+          console.log("El dispositivo no tiene soporte para huella digital");
+      }
+  } catch (error) {
+      console.log("Error en la confirmacion con huella digital:", error);
+  }
+  }
+
+  const delRecuerdo = async(id) => {
+    try {
+      const response = await fetch(
+        `https://practica2.fly.dev/delete-recuerdo/${id}`, // Cambia la URL y la ruta según tu servidor
+      {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+      }
+      );        
+      const json = await response.json();
+      if (response.ok) {
+          console.log('Recuerdo eliminado exitosamente');
+      } else {
+          console.log('Error al eliminar recuerdo:', json.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    navigation.navigate("inicio",{userId})
+      return json;
+  };
 
     const handleRegresa = () => {
         // Navega a la pantalla de registro (Registra)
@@ -39,13 +120,13 @@ function Delete() {
     <Stack p="4" space={3}>
         <Stack space={2}>
             <Heading size="md" ml="-1">
-                Nombre del recuerdo
+                {recuerdo.length > 0 ? recuerdo[0].titulo : ""}
             </Heading>
         </Stack>
         <Text fontWeight="400">
-            En este apartado deberá de ir la descripción que el usuario realice según cada recuerdo que vaya guardando.
+            {recuerdo.length > 0 ? recuerdo[0].descripcion : ""}
         </Text>
-        <Text> Fecha de creacion:</Text>
+        <Text> Fecha de creacion: {recuerdo.length > 0 ? recuerdo[0].fecha : ""}</Text>
         <Stack
         mb="2.5"
         mt="1.5"
@@ -55,7 +136,7 @@ function Delete() {
         justifyContent={{ base: "flex-start", md: "center" }} // Alinea los botones horizontalmente en el eje principal
         alignItems={{ base: "flex-start", md: "center" }} // Alinea los botones verticalmente en el eje cruzado
         >
-          <Button size="md" href="#">Si, eliminalo</Button>
+          <Button size="md" onPress={() => confirmDel()}>Si, eliminalo</Button>
           <Button size="md" colorScheme="secondary" onPress={handleRegresa}>
             No, regresa
           </Button>
