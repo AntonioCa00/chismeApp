@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, Center, NativeBaseProvider } from "native-base";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import AwesomeAlert from 'react-native-awesome-alerts';
+
+
 
 function Recuerdo() {
 
@@ -38,18 +41,30 @@ function Recuerdo() {
         }
         );        
         const json = await response.json();
+
+        //ALERTA EXITO REGISTRAR
+        setAlertMessage("Se ha registrado el recuerdo."); // Establecer mensaje de alerta
+        setAlertVisible(true); // Mostrar la alerta
+        //TERMINA ALERTA EXITO REGISTRAR
+
         console.log('Se registro el recuerdo',fecha)
         // Restablecer los estados a su valor inicial ("")
         setTitulo("");
         setDescripcion("");
         setNotas("");
         setFecha(formattedDate);
-        navigation.navigate("inicio",{userId})
+        // Agregar el mensaje de alerta al estado de la ruta antes de la redirección
+        navigation.navigate("inicio", { userId, alertMessage: "Se ha registrado el recuerdo." });
         return json;
         } catch (error) {
           console.log(error)
         }
     };
+    //constantes para alerts
+    const [alertVisible, setAlertVisible] = useState(false); // Estado para la visibilidad de la alerta
+    const [alertMessage, setAlertMessage] = useState(""); // Estado para el mensaje de la alerta
+  
+
 
     return <Center w="100%">
     <Box safeArea p="2" py="8" w="90%" maxW="290">
@@ -79,7 +94,25 @@ function Recuerdo() {
           Guardar Recuerdo
         </Button>
       </VStack>
+
     </Box>
+
+    {/* Alerta */}
+    <AwesomeAlert
+        show={alertVisible}
+        showProgress={false}
+        title="Éxito"
+        message={alertMessage}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showCancelButton={false}
+        showConfirmButton={true}
+        confirmText="OK"
+        confirmButtonColor="#50C878"
+        onConfirmPressed={() => {
+          setAlertVisible(false); // Ocultar la alerta al confirmar
+        }}
+      />
   </Center>;
 }
 

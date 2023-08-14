@@ -1,13 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { Box, Heading, Text, Center, Stack, Button } from "native-base";
+import { Box, Heading, Text, Center, Stack, Button, ScrollView  } from "native-base";
 import { useNavigation, useIsFocused, useRoute } from "@react-navigation/native";
+import AwesomeAlert from 'react-native-awesome-alerts';
+
 
 function Inicio() {
 
     const navigation = useNavigation(); // Obtiene el objeto de navegación
-
     const route = useRoute();
-    const userId = route.params?.userId;
+    const { userId, alertMessage,deleteAlertMessage } = route.params; // Extraer userId y alertMessage de los parámetros de ruta
+
+    const [showAddEditAlert, setShowAddEditAlert] = useState(false);
+    const [addEditAlertTitle, setAddEditAlertTitle] = useState("");
+    const [addEditAlertText, setAddEditAlertText] = useState("");
+
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+    const [deleteAlertTitle, setDeleteAlertTitle] = useState("");
+    const [deleteAlertText, setDeleteAlertText] = useState("");
+
+    useEffect(() => {
+        if (alertMessage) {
+            setAddEditAlertTitle("Proceso exitoso!...");
+            setAddEditAlertText(alertMessage);
+            setShowAddEditAlert(true);
+        }
+    }, [alertMessage]);
+
+    useEffect(() => {
+        if (deleteAlertMessage) {
+            setShowAddEditAlert(false);
+            setAddEditAlertTitle("");
+            setAddEditAlertText("");
+
+            setDeleteAlertTitle("Proceso exitoso!...");
+            setDeleteAlertText(deleteAlertMessage);
+            setShowDeleteAlert(true);
+        }
+    }, [deleteAlertMessage]);
+
+
 
     const [recuerdos, setRecuerdos] = useState([]); // Estado para almacenar los recuerdos
     const isFocused = useIsFocused(); // Verifica si la pantalla tiene enfoque
@@ -37,8 +68,47 @@ function Inicio() {
     };
 
 return (
+    <ScrollView>
     <Center>
-        {/* Resto de tu código */}
+                <Heading size="lg" mb="4">
+                    Bienvenido chisme amigo
+                </Heading>
+
+                {showAddEditAlert && (
+                    <AwesomeAlert
+                        show={true}
+                        showProgress={false}
+                        title={addEditAlertTitle}
+                        message={addEditAlertText}
+                        closeOnTouchOutside={true}
+                        closeOnHardwareBackPress={false}
+                        showCancelButton={false}
+                        showConfirmButton={true}
+                        confirmText="OK"
+                        confirmButtonColor="#50C878"
+                        onConfirmPressed={() => {
+                            setShowAddEditAlert(false);
+                        }}
+                    />
+                )}
+
+                {showDeleteAlert && (
+                    <AwesomeAlert
+                        show={true}
+                        showProgress={false}
+                        title={deleteAlertTitle}
+                        message={deleteAlertText}
+                        closeOnTouchOutside={true}
+                        closeOnHardwareBackPress={false}
+                        showCancelButton={false}
+                        showConfirmButton={true}
+                        confirmText="OK"
+                        confirmButtonColor="#50C878"
+                        onConfirmPressed={() => {
+                            setShowDeleteAlert(false);
+                        }}
+                    />
+                )}
         {recuerdos.map((recuerdo, index) => (
             <Box
                 key={index}
@@ -93,6 +163,7 @@ return (
             </Box>
         ))}
     </Center>
+    </ScrollView>
 );
 
 }

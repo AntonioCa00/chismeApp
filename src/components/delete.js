@@ -10,9 +10,12 @@ function Delete() {
   const route = useRoute();
   const userId = route.params?.userId;
   const recId = route.params?.recuerdoId;
+
   const isFocused = useIsFocused(); // Obtiene el estado de enfoque de la pantalla
 
   const [recuerdo, setRecuerdo] = useState([]); // Estado para almacenar recuerdo
+
+
 
   useEffect(() => {
     if (isFocused) {
@@ -77,13 +80,19 @@ function Delete() {
       const json = await response.json();
       if (response.ok) {
           console.log('Recuerdo eliminado exitosamente');
+          // Actualizar el estado de la alerta en la pantalla de inicio
+          // Mostrar alerta de éxito
+            
+          navigation.navigate("inicio", { userId, deleteAlertMessage: "Se ha eliminado el recuerdo exitosamente." });
+
+
       } else {
           console.log('Error al eliminar recuerdo:', json.message);
       }
     } catch (error) {
       console.log(error);
     }
-    navigation.navigate("inicio",{userId})
+    navigation.navigate("inicio", { userId});
       return json;
   };
 

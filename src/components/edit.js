@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Box, Text, Heading, VStack, FormControl, Input, Button, Center } from "native-base";
 import { useRoute, useIsFocused, useNavigation } from "@react-navigation/native";
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 function Edit() {
   const route = useRoute();
   const userId = route.params?.userId;
   const recId = route.params?.recuerdoId;
+  
+  //para alertas
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   const navigation = useNavigation(); // Obtiene el objeto de navegación
 
@@ -57,7 +63,14 @@ function Edit() {
       const json = await response.json();
       console.log("Se actualizó el recuerdo", formattedDate);
       console.log(response);
-      navigation.navigate("inicio",{userId})
+      
+      // Mostrar alerta de éxito
+      setAlertMessage("Se ha actualizado el recuerdo.");
+      setAlertVisible(true);
+
+      
+      navigation.navigate("inicio", { userId, alertMessage: "Se ha actualizado el recuerdo." });
+      
       return json;
     } catch (error) {
       console.log(error);

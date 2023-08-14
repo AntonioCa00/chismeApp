@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, Center } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-import {navigate} from '../../navigation';
+//import {navigate} from '../../navigation';
+import AwesomeAlert from 'react-native-awesome-alerts';
+
 
 function Login({ handleLogin }) {
     const navigation = useNavigation(); // Obtiene el objeto de navegación
@@ -37,11 +39,13 @@ const handleLoginButtonPress = async () => {
         if (user.length !== 0) {
             console.log('Inicio de sesión exitoso');
             handleLogin();
+
             const userId = user[0].id_user; // Obtiene el userId del primer usuario
             navigation.navigate("recuerdo", { userId }); // Agrega esta línea
-            navigation.navigate("inicio", { userId }); // Pasa el userId a la pantalla de inicio
+            navigation.navigate("inicio", { userId, alertMessage: "Bienvenido chisme amigo" }); // Pasa el userId a la pantalla de inicio y el mensaje
         } else {
             console.log('Usuario no encontrado o credenciales incorrectas');
+            setShowAlert(true);
         }
     } catch (error) {
         console.log('Error al verificar usuario:', error);
@@ -52,6 +56,9 @@ const handleLoginButtonPress = async () => {
         // Navega a la pantalla de registro (Registra)
         navigate("registra");
     };
+    //Constantes para mostrar alertas
+    // PARA ERROR EN USUARIO
+    const [showAlert, setShowAlert] = useState(false);
 
     return (
         <Center w="100%">
@@ -76,6 +83,19 @@ const handleLoginButtonPress = async () => {
                     <Button onPress={handleLoginButtonPress} mt="2" colorScheme="indigo">
                         Iniciar Sesión
                     </Button>
+                    
+                    <AwesomeAlert
+                        show={showAlert}
+                        showProgress={false}
+                        title="Error"
+                        message="Usuario no encontrado o credenciales incorrectas"
+                        closeOnTouchOutside={true}
+                        closeOnHardwareBackPress={false}
+                        showConfirmButton={true}
+                        confirmText="Aceptar"
+                        confirmButtonColor="#50C878"
+                        onConfirmPressed={() => setShowAlert(false)}
+                    />
                     <HStack mt="6" justifyContent="center">
                         <Text fontSize="sm" color="coolGray.600" _dark={{
                             color: "warmGray.200"

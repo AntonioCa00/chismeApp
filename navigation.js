@@ -7,6 +7,7 @@ import Inicio from "./src/components/inicio";
 import Recuerdo from "./src/components/recuerdo";
 import Edit from "./src/components/edit";
 import Delete from "./src/components/delete";
+import Login from "./src/components/login";
 
 const Tab = createBottomTabNavigator();
 
