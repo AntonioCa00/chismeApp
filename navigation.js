@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer, createNavigationContainerRef  } from "@react-navigation/native";
-import Registra from "./src/components/registra";
+import Registra from './src/components/registra';
 import Inicio from "./src/components/inicio";
 import Recuerdo from "./src/components/recuerdo";
 import Edit from "./src/components/edit";
@@ -12,12 +12,6 @@ import Login from "./src/components/login";
 const Tab = createBottomTabNavigator();
 
 export const navigationRef = createNavigationContainerRef()
-
-export function navigate(name, params) {
-  if (navigationRef.isReady()) {
-    navigationRef.navigate(name, params);
-  }
-}
 
 export default function Navigation() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -82,9 +76,13 @@ export default function Navigation() {
           }} />
         </Tab.Navigator>
       ) : (
-        <Login handleLogin={handleLogin} />
-      )}
-    <Tab.Screen name="registra" component={Registra} />
+        <Tab.Navigator>
+          <Tab.Screen name="login">
+            {() => <Login handleLogin={handleLogin} />}
+          </Tab.Screen>
+          <Tab.Screen name="registra" component={Registra} />
+        </Tab.Navigator>)
+      }
     </NavigationContainer>
   );
 }

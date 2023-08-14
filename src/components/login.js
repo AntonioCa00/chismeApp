@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, Center } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-//import {navigate} from '../../navigation';
 import AwesomeAlert from 'react-native-awesome-alerts';
+
+import { navigate } from '../../navigation'; // Verifica la ruta correcta
 
 
 function Login({ handleLogin }) {
@@ -49,13 +50,10 @@ const handleLoginButtonPress = async () => {
         }
     } catch (error) {
         console.log('Error al verificar usuario:', error);
+        setShowAlert(true);
     }
 };  
 
-    const handleRegisterLinkPress = () => {
-        // Navega a la pantalla de registro (Registra)
-        navigate("registra");
-    };
     //Constantes para mostrar alertas
     // PARA ERROR EN USUARIO
     const [showAlert, setShowAlert] = useState(false);
@@ -96,20 +94,6 @@ const handleLoginButtonPress = async () => {
                         confirmButtonColor="#50C878"
                         onConfirmPressed={() => setShowAlert(false)}
                     />
-                    <HStack mt="6" justifyContent="center">
-                        <Text fontSize="sm" color="coolGray.600" _dark={{
-                            color: "warmGray.200"
-                        }}>
-                            ¿No tienes cuenta?{" "}
-                        </Text>
-                        <Link onPress={handleRegisterLinkPress} _text={{
-                            color: "indigo.500",
-                            fontWeight: "medium",
-                            fontSize: "sm"
-                        }}>
-                            Registrate.
-                        </Link>
-                    </HStack>
                 </VStack>
             </Box>
         </Center>
