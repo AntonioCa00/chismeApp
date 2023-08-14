@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, Center, NativeBaseProvider } from "native-base";
+import { useNavigation } from "@react-navigation/native";
 
 function Registra() {
+
+  const navigation = useNavigation(); // Obtiene el objeto de navegación
 
   // Estados para los campos del formulario
   const [nombre, setNombre] = useState("");
   const [apellidos, setApellidos] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+
 
   const sendUser = async(nom,ape,corr,pass) => {
     try {
@@ -31,6 +34,11 @@ function Registra() {
       const json = await response.json();
       console.log('Se registro')
       console.log(response); // Agrega esta línea para imprimir la respuesta
+      setNombre("")
+      setApellidos("")
+      setEmail("")
+      setPassword("")
+      navigation.navigate("login");
       return json;
       } catch (error) {
         console.log(error)
@@ -64,10 +72,6 @@ function Registra() {
         <FormControl>
           <FormControl.Label>Password</FormControl.Label>
           <Input value={password} onChangeText={(text) => setPassword(text)} type="password"  placeholder="Ingresa tu password"/>
-        </FormControl>
-        <FormControl>
-          <FormControl.Label>Confirmar Password</FormControl.Label>
-          <Input value={confirmPassword} onChangeText={(text) => setConfirmPassword(text)} type="password"  placeholder="Confirma tu password"/>
         </FormControl>
         <Button onPress={() => sendUser(nombre, apellidos, email, password)} mt="2" colorScheme="indigo">
           Crear perfil

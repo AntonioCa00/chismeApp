@@ -3,9 +3,6 @@ import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, C
 import { useNavigation } from "@react-navigation/native";
 import AwesomeAlert from 'react-native-awesome-alerts';
 
-import { navigate } from '../../navigation'; // Verifica la ruta correcta
-
-
 function Login({ handleLogin }) {
     const navigation = useNavigation(); // Obtiene el objeto de navegación
 
