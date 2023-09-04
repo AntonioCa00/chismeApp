@@ -41,7 +41,8 @@ function Delete() {
 
   const confirmDel = async () => {
     try {
-      const hasHardwareSupport = await LocalAuthentication.hasHardwareAsync();
+      const hasHardwareSupport 
+      = await LocalAuthentication.hasHardwareAsync();
       if (hasHardwareSupport) {
           const isEnrolled = await LocalAuthentication.isEnrolledAsync();
           if (isEnrolled) {

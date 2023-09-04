@@ -14,23 +14,20 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSFaceIDUsageDescription": "Proteger tu cuenta con reconocimiento facial utilizando Face ID"
-      }
-    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.diegocruz01.chismeApp"
     },
-    "permissions": [
-      "USE_FINGERPRINT"
-    ],
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4286cb6a-a798-45e2-b21e-345d1873e904"
+      }
     }
   }
 }
